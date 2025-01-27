@@ -63,6 +63,8 @@ const AuthForm = ({ type }: { type: string }) => {
           city: data.city!,
           postalCode: data.postalCode!,
           dateOfBirth: data.dateOfBirth!,
+          state: data.state!,
+          ssn: data.ssn!,
           email: data.email,
           password: data.password
         }
@@ -70,7 +72,6 @@ const AuthForm = ({ type }: { type: string }) => {
         const newUser = await signUp(userData);
 
         setUser(newUser);
-        console.log(newUser);
       }
 
       setIsLoading(false);
@@ -151,6 +152,21 @@ const AuthForm = ({ type }: { type: string }) => {
                       name="postalCode"
                       placeholder="Example: 0000"
                       label="Postal Code"
+                    />
+                  </div>
+
+                  <div className="flex gap-4">
+                    <CustomInput
+                      control={form.control}
+                      name="state"
+                      placeholder="Example: Harare"
+                      label="State"
+                    />
+                    <CustomInput
+                      control={form.control}
+                      name="ssn"
+                      placeholder="Example: 12345"
+                      label="SSN"
                     />
                   </div>
 
