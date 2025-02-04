@@ -37,9 +37,9 @@ const MobileNav = ({ user }: MobileNavProps) => {
             className="cursor-pointer items-center flex gap-1 px-4"
           >
             <Image
-              src="/icons/logo.svg"
-              width={34}
-              height={34}
+              src="/icons/money-mail-svgrepo-com.svg"
+              width={50}
+              height={50}
               alt="Banking Application"
             />
             <h1 className="text-26 font-bold text-black-1">Bazell Banking</h1>

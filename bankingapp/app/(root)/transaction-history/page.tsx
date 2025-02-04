@@ -18,6 +18,8 @@ const TransactionHistory = async ({searchParams: {id, page}}: SearchParamProps) 
     const appwriteItemId = (id as string) || accountsData[0]?.appwriteItemId;
   
     const account = await getAccount({ appwriteItemId });
+
+    
     
   return (
     
@@ -52,7 +54,7 @@ const TransactionHistory = async ({searchParams: {id, page}}: SearchParamProps) 
         </div>
 
         <section className='flex w-full flex-col gap-6'>
-          {/* <TransactionsTable transactions={account?.transactions}/> */}
+          <TransactionsTable transactions={account?.transactions}/>
         </section>
       </div>
     </div>

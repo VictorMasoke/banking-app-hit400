@@ -69,20 +69,20 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     // get bank from db
     const bank = await getBank({ documentId: appwriteItemId });
 
+    console.log('bank: ', bank);
+
     // get account info from plaid
     const accountsResponse = await plaidClient.accountsGet({
       access_token: bank.accessToken,
     });
     const accountData = accountsResponse.data.accounts[0];
 
-    
-
     // get transfer transactions from appwrite
     const transferTransactionsData = await getTransactionsByBankId({
       bankId: bank.$id,
     });
-    
-    console.log('Getting transactions: ', transferTransactionsData)
+
+    console.log('transferTransactionsData: ', transferTransactionsData);
 
     const transferTransactions = transferTransactionsData.documents.map(
       (transferData: Transaction) => ({
@@ -131,7 +131,6 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     console.error("An error occurred while getting the account:", error);
   }
 };
-
 // Get bank info
 export const getInstitution = async ({
   institutionId,

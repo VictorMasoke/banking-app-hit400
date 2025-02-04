@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "Basel Banking",
   description: "Full banking application with Besell Account monitoring",
   icons: {
-    icon: "/icons/logo.svg"
+    icon: "/icons/money-mail-svgrepo-com.svg"
   }
 };
 

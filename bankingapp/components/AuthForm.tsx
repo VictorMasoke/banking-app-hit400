@@ -88,9 +88,9 @@ const AuthForm = ({ type }: { type: string }) => {
       <header className="flex flex-col gap-5 md:gap-8">
         <Link href="/" className="cursor-pointer flex items-center gap-1">
           <Image
-            src="/icons/logo.svg"
-            width={34}
-            height={34}
+            src="/icons/money-mail-svgrepo-com.svg"
+            width={50}
+            height={50}
             alt="Horizon Logo"
           />
           <h1 className="text-26 font-bold text-black-1">Bazell Banking</h1>
@@ -159,13 +159,13 @@ const AuthForm = ({ type }: { type: string }) => {
                     <CustomInput
                       control={form.control}
                       name="state"
-                      placeholder="Example: Harare"
+                      placeholder="Example: AI"
                       label="State"
                     />
                     <CustomInput
                       control={form.control}
                       name="ssn"
-                      placeholder="Example: 12345"
+                      placeholder="Example: 074942011"
                       label="SSN"
                     />
                   </div>
