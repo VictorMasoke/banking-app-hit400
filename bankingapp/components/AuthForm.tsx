@@ -52,7 +52,11 @@ const AuthForm = ({ type }: { type: string }) => {
           password: data.password,
         })
 
-        if (response) router.push('/')
+        if (response.role === "user") {
+          router.push('/')
+        } else {
+          router.push('/admin/home')
+        }
       }
 
       if(type === 'sign-up') {

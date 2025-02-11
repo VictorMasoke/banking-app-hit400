@@ -13,12 +13,14 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { sidebarLinks } from "@/constants";
+import { sidebarLinks, sidebarLinksAdmin } from "@/constants";
 import { cn } from "@/lib/utils";
 import Footer from "./Footer";
 
 const MobileNav = ({ user }: MobileNavProps) => {
   const pathname = usePathname();
+  // Use sidebarLinksAdmin if the user's role is "admin"
+  const links = user.role === "admin" ? sidebarLinksAdmin : sidebarLinks;
   return (
     <section className="w-full max-w-[264px]">
       <Sheet>
@@ -48,7 +50,7 @@ const MobileNav = ({ user }: MobileNavProps) => {
           <div className="mobilenav-sheet">
             <SheetClose asChild>
               <nav className="flex h-full flex-col gap-6 pt-16 text-white">
-                {sidebarLinks.map((item) => {
+                {links.map((item) => {
                   const isActive =
                     pathname === item.route ||
                     pathname.startsWith(`${item.route}/`);

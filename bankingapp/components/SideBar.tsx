@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import React from 'react'
-import { sidebarLinks } from "@/constants"
+import { sidebarLinks, sidebarLinksAdmin } from "@/constants"
 import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
 import Footer from "./Footer"
@@ -11,6 +11,9 @@ import PlaidLink from "./PlaidLink"
 
 const SideBar = ({user}: SiderbarProps) => {
   const pathname = usePathname();
+
+  // Use sidebarLinksAdmin if the user's role is "admin"
+  const links = user.role === "admin" ? sidebarLinksAdmin : sidebarLinks;
 
   return (
     <section className='sidebar'>
@@ -26,7 +29,9 @@ const SideBar = ({user}: SiderbarProps) => {
                 <h1 className="sidebar-logo">Bazell Banking</h1>
             </Link>
 
-            {sidebarLinks.map((item) => {
+            
+
+            {links.map((item) => {
                 const isActive = 
                 pathname === item.route || pathname.startsWith(`${item.route}/`)
 
@@ -49,8 +54,8 @@ const SideBar = ({user}: SiderbarProps) => {
                     </Link>
                 )
             })}
-
-            <PlaidLink user={user}/>
+            
+            {user.role !== "admin" && <PlaidLink user={user} />}
         </nav>
 
         <Footer user={user}/>

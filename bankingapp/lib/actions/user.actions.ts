@@ -27,14 +27,31 @@ export const getUserInfo = async ({ userId }: getUserInfoProps) => {
     const user = await database.listDocuments(
       DATABASE_ID!,
       USER_COLLECTION_ID!,
-      [Query.equal('userId', [userId])]
-    )
+      [Query.equal("userId", [userId])]
+    );
 
     return parseStringify(user.documents[0]);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
+
+export const getAllUsersInfo = async () => {
+  try {
+    const { database } = await createAdminClient();
+
+    const users = await database.listDocuments(
+      DATABASE_ID!,
+      USER_COLLECTION_ID!
+    );
+
+    return parseStringify(users.documents);
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    // Optionally, rethrow or return an empty array.
+    return [];
+  }
+};
 
 export const signIn = async ({ email, password }: signInProps) => {
   try {
@@ -48,13 +65,13 @@ export const signIn = async ({ email, password }: signInProps) => {
       secure: true,
     });
 
-    const user = await getUserInfo({ userId: session.userId }) 
+    const user = await getUserInfo({ userId: session.userId });
 
     return parseStringify(user);
   } catch (error) {
-    console.error('Error', error);
+    console.error("Error", error);
   }
-}
+};
 
 export const signUp = async ({ password, ...userData }: SignUpParams) => {
   const { email, firstName, lastName } = userData;
@@ -112,12 +129,11 @@ export async function getLoggedInUser() {
   try {
     const { account } = await createSessionClient();
     const result = await account.get();
-
-    const user = await getUserInfo({ userId: result.$id})
+    const user = await getUserInfo({ userId: result.$id });
 
     return parseStringify(user);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return null;
   }
 }
@@ -147,8 +163,6 @@ export const createLinkToken = async (user: User) => {
     };
 
     const response = await plaidClient.linkTokenCreate(tokenParams);
-
-    console.log("Response creating token: ", response);
 
     return parseStringify({ linkToken: response.data.link_token });
   } catch (error) {
@@ -287,20 +301,22 @@ export const getBank = async ({ documentId }: getBankProps) => {
   }
 };
 
-export const getBankByAccountId = async ({ accountId }: getBankByAccountIdProps) => {
+export const getBankByAccountId = async ({
+  accountId,
+}: getBankByAccountIdProps) => {
   try {
     const { database } = await createAdminClient();
 
     const bank = await database.listDocuments(
       DATABASE_ID!,
       BANK_COLLECTION_ID!,
-      [Query.equal('accountId', [accountId])]
-    )
+      [Query.equal("accountId", [accountId])]
+    );
 
-    if(bank.total !== 1) return null;
+    if (bank.total !== 1) return null;
 
     return parseStringify(bank.documents[0]);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};

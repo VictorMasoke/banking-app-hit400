@@ -40,6 +40,7 @@ declare type User = {
   postalCode: string;
   dateOfBirth: string;
   ssn: string;
+  role: string;
 };
 
 declare type NewUserParams = {
@@ -244,6 +245,27 @@ declare interface TransactionTableProps {
   transactions: Transaction[];
 }
 
+declare interface AccountsProps {
+  accounts: account[];
+}
+
+interface account {
+  $id: string;
+  email: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
+  address1: string;
+  city: string;
+  postalCode: string;
+  dateOfBirth: string;
+  ssn: string;
+  state: string;
+  role: string | null;
+  '$createdAt': string;
+  '$updatedAt': string;
+}
+
 declare interface CategoryProps {
   category: CategoryCount;
 }
@@ -328,3 +350,44 @@ declare interface getBankProps {
 declare interface getBankByAccountIdProps {
   accountId: string;
 }
+
+
+// Define an interface for a single bank account.
+declare interface BankAccount {
+  appwriteItemId: string;
+  availableBalance: number;
+  currentBalance: number;
+  id: string;
+  institutionId: string;
+  mask: string;
+  name: string;
+  officialName: string;
+  sharableId: string;
+  subtype: string;
+  type: string;
+}
+
+// Define an interface for a transaction (customize this as needed).
+declare interface Transaction {
+  id: string;
+  name: string;
+  amount: number;
+  status: string;
+  date: string;
+  paymentChannel: string;
+  category?: string;
+}
+
+// Define the overall interface for the account data object.
+declare interface AccountData {
+  data: BankAccount[];            // Array of accounts; your JSON has one account.
+  totalBanks: number;
+  totalCurrentBalance: number;
+  transactions?: Transaction[];   // Optional transactions array.
+}
+
+// Finally, define the props for the TransactionHistory component.
+declare interface TransactionHistoryProps {
+  account: AccountData;
+}
+

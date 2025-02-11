@@ -21,6 +21,25 @@ export const sidebarLinks = [
   },
 ];
 
+
+export const sidebarLinksAdmin = [
+  {
+    imgURL: "/icons/home.svg",
+    route: "/admin/home",
+    label: "Home",
+  },
+  {
+    imgURL: "/icons/transaction.svg",
+    route: "/admin/transaction-log",
+    label: "Transaction Log",
+  },
+  {
+    imgURL: "/icons/dollar-circle.svg",
+    route: "/admin/user-banks",
+    label: "User Banks",
+  },
+];
+
 // good_user / good_password - Bank of America
 export const TEST_USER_ID = "6627ed3d00267aa6fa3e";
 
