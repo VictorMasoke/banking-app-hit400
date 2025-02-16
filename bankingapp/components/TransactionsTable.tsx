@@ -26,7 +26,15 @@ const CategoryBadge = ({ category }: CategoryBadgeProps) => {
   )
 } 
 
-const TransactionsTable = ({ transactions }: TransactionTableProps) => {
+const TransactionsTable = ({ transactions = [] }: TransactionTableProps) => {
+
+  console.log(transactions);
+
+  if (!Array.isArray(transactions)) {
+    console.error("Transactions data is not an array:", transactions);
+    return <p className="text-center text-red-500">No transactions available.</p>;
+  }
+
   return (
     <Table>
       <TableHeader className="bg-[#f9fafb]">

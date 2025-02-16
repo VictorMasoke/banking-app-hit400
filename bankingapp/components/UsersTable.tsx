@@ -29,15 +29,21 @@ interface UsersTableProps {
 }
 
 const UsersTable: React.FC<UsersTableProps> = ({ accounts }) => {
+  
+  
   const [open, setOpen] = useState(false);
   const [primaryAccount, setPrimaryAccount] = useState<any>(null);
+  const [account, setAccount] = useState<any>(null);
 
   const handleRowClick = async (userId: string) => {
     try {
       const accountsData = await getAccounts({ userId });
       const primary = accountsData?.data[0];
-      // const appwriteItemId =  primary.appwriteItemId;
-      // const account = await getAccount({ appwriteItemId });
+      const appwriteId =  primary.appwriteItemId;
+      const accountData = await getAccount({ 	appwriteItemId: appwriteId });
+
+      setAccount(accountData?.transactions);
+      
       
       setPrimaryAccount(primary);
       setOpen(true); // Open the modal once data is fetched
@@ -52,7 +58,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ accounts }) => {
         <TableHeader className="bg-[#f9fafb]">
           <TableRow>
             <TableHead className="px-2">Email</TableHead>
-            <TableHead className="px-2">User ID</TableHead>
+            <TableHead className="px-2">Account Number</TableHead>
             <TableHead className="px-2">Name</TableHead>
             <TableHead className="px-2">Address</TableHead>
             <TableHead className="px-2">City</TableHead>
@@ -89,12 +95,11 @@ const UsersTable: React.FC<UsersTableProps> = ({ accounts }) => {
 
       {/* Modal that shows account details and transactions */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent style={{ width: '60%' }}>
+        <DialogContent style={{ width: "90%", maxWidth: "1200px", maxHeight: "80vh", overflowY: "auto" }}>
           <DialogHeader>
             <DialogTitle>Account Details</DialogTitle>
-            
           </DialogHeader>
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-col gap-4">
             <div className="space-y-6">
               {primaryAccount && (
                 <>
@@ -118,6 +123,12 @@ const UsersTable: React.FC<UsersTableProps> = ({ accounts }) => {
                       </p>
                     </div>
                   </div>
+
+                  <section className="flex w-full flex-col gap-6">
+                    <div className="max-h-[400px] overflow-y-auto border rounded-lg">
+                      <TransactionsTable transactions={account} />
+                    </div>
+                  </section>
                 </>
               )}
             </div>
