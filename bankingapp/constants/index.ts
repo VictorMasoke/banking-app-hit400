@@ -30,8 +30,8 @@ export const sidebarLinksAdmin = [
   },
   {
     imgURL: "/icons/transaction.svg",
-    route: "/admin/transaction-log",
-    label: "Transaction Log",
+    route: "/admin/notification-log",
+    label: "Notification Log",
   },
   {
     imgURL: "/icons/dollar-circle.svg",
