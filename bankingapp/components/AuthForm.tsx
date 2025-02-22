@@ -97,7 +97,7 @@ const AuthForm = ({ type }: { type: string }) => {
             height={50}
             alt="Horizon Logo"
           />
-          <h1 className="text-26 font-bold text-black-1">Bazell Banking</h1>
+          <h1 className="text-26 font-bold text-black-1">Basel Banking</h1>
         </Link>
 
         <div className="flex flex-col gap-1 md:gap-3">

@@ -26,7 +26,7 @@ const SideBar = ({user}: SiderbarProps) => {
                     alt="Banking Application"
                     className="size-[24px] max-xl:size-14"
                 />
-                <h1 className="sidebar-logo">Bazell Banking</h1>
+                <h1 className="sidebar-logo">Basel Banking</h1>
             </Link>
 
             

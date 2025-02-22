@@ -14,7 +14,7 @@ const page = async () => {
       <div className='transactions-header'>
         <HeaderBox
           title='All Bank Users'
-          subtext='See all the user details using your Bazell Banking System'
+          subtext='See all the user details using your Basel Banking System'
         />
       </div>
 

@@ -44,7 +44,7 @@ const MobileNav = ({ user }: MobileNavProps) => {
               height={50}
               alt="Banking Application"
             />
-            <h1 className="text-26 font-bold text-black-1">Bazell Banking</h1>
+            <h1 className="text-26 font-bold text-black-1">Basel Banking</h1>
           </Link>
 
           <div className="mobilenav-sheet">

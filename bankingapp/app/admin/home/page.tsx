@@ -1,42 +1,24 @@
-import React from 'react'
-import HeaderBox from '@/components/HeaderBox'
-import { getLoggedInUser } from '@/lib/actions/user.actions';
-import { getAccount, getAccounts } from '@/lib/actions/bank.actions';
+import HeaderBox from "@/components/HeaderBox";
+import { getLoggedInUser } from "@/lib/actions/user.actions";
+import AdminDashboard from "@/components/AdminDashboard";
 
-const Home = async ({ searchParams: {id, page}} :SearchParamProps) => {
-  //clearImmediate
-  const currentPage = Number(page as string) || 1;
+const Home = async () => {
   const loggedIn = await getLoggedInUser();
-  // const accounts = await getAccounts({ 
-  //   userId: loggedIn.$id 
-  // })
-
-  // if(!accounts) return;
-  
-  // const accountsData = accounts?.data;
-  // const appwriteItemId = (id as string) || accountsData[0]?.appwriteItemId;
-
-  // const account = await getAccount({ appwriteItemId })
 
   return (
-    <section className='home'>
-      <div className='home-content'>
-        <header className='home-header'>
-          <HeaderBox
-            type="greeting"
-            title="Welcome"
-            user={loggedIn?.firstName || "Admin"}
-            subtext="Manage your clients with ease and efficiency using Bazell Compliance"
-          />
-          
-        </header>
+    <section className="p-6">
+      {/* Header */}
+      <HeaderBox
+        type="greeting"
+        title="Welcome"
+        user={loggedIn?.firstName || "Admin"}
+        subtext="Manage your clients with ease and efficiency using Basel Compliance"
+      />
 
-        
-      </div>
-
-      
+      {/* Dashboard (Client Component) */}
+      <AdminDashboard />
     </section>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
