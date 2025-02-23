@@ -29,6 +29,11 @@ export const sidebarLinksAdmin = [
     label: "Home",
   },
   {
+    imgURL: "/icons/money-send.svg",
+    route: "/admin/portfolio",
+    label: "Asset Portfolio",
+  },
+  {
     imgURL: "/icons/transaction.svg",
     route: "/admin/notification-log",
     label: "Notification Log",

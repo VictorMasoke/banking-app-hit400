@@ -83,6 +83,16 @@ declare type Transaction = {
   receiverBankId: string;
 };
 
+declare type CreateAssetProps = {
+  assetName: string;
+  assetType: string;
+  assetValue: number;
+  purchaseDate: string;
+  maturityDate: string;
+  intrestRate: number;
+  createdAt: string;
+};
+
 declare type Bank = {
   $id: string;
   accountId: string;
@@ -315,6 +325,11 @@ declare interface CreateTransactionProps {
 declare interface getTransactionsByBankIdProps {
   bankId: string;
 }
+
+declare interface getAssetByIdProps {
+  id: string;
+}
+
 
 declare interface signInProps {
   email: string;

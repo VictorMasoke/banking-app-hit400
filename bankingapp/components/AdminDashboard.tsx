@@ -2,56 +2,55 @@
 
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bar, Pie } from "react-chartjs-2";
+import { Line, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
   ArcElement,
 } from "chart.js";
+import AnimatedCountUp from "./AnimatedCountUp";
 
-// Register required components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-);
+// Register required Chart.js components
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement);
 
-const AdminDashboard = () => {
-  // Dummy Data for Charts
-  const accountGrowthData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-    datasets: [
-      {
-        label: "Total Deposits ($M)",
-        data: [5, 8, 6, 12, 15, 20],
-        backgroundColor: "#2563EB",
-      },
-    ],
+interface AdminDashboardProps {
+  metricsData: any;
+  assetData: any;
+  loading: boolean;
+  accountGrowthData: any;
+}
+
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ metricsData, assetData, loading, accountGrowthData }) => {
+  if (loading) {
+    return <div className="text-center text-blue-700 font-semibold text-lg">Loading Dashboard...</div>;
+  }
+
+  const lineChartOptions = {
+    responsive: true,
+    animation: {
+      duration: 2000,
+      easing: "easeInOutQuad",
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { grid: { display: true, color: "#E5E7EB" } },
+    },
   };
 
-  const riskData = {
-    labels: [
-      "Credit Risk",
-      "Market Risk",
-      "Operational Risk",
-      "Liquidity Risk",
-    ],
-    datasets: [
-      {
-        label: "Risk Exposure ($M)",
-        data: [3.2, 4.5, 2.8, 3.9],
-        backgroundColor: ["#1E3A8A", "#2563EB", "#60A5FA", "#93C5FD"],
-      },
-    ],
+  const pieChartOptions = {
+    responsive: true,
+    animation: {
+      animateScale: true,
+      animateRotate: true,
+      duration: 2000,
+      easing: "easeOutBounce",
+    },
   };
 
   return (
@@ -63,7 +62,9 @@ const AdminDashboard = () => {
             <CardTitle>Total Assets</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xl font-bold">$1.2B</p>
+            <div className="text-xl font-bold">
+              <AnimatedCountUp amount={metricsData?.totalAssets || 0} />
+            </div>
           </CardContent>
         </Card>
 
@@ -72,7 +73,9 @@ const AdminDashboard = () => {
             <CardTitle>Total Deposits</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xl font-bold">$800M</p>
+            <div className="text-xl font-bold">
+              <AnimatedCountUp amount={metricsData?.totalDeposits || 0} />
+            </div>
           </CardContent>
         </Card>
 
@@ -81,7 +84,7 @@ const AdminDashboard = () => {
             <CardTitle>Net Interest Margin</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xl font-bold">3.5%</p>
+            <div className="text-xl font-bold">{metricsData?.netInterestMargin || "0.0"}%</div>
           </CardContent>
         </Card>
 
@@ -90,29 +93,31 @@ const AdminDashboard = () => {
             <CardTitle>Loan Portfolio</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xl font-bold">$500M</p>
+            <div className="text-xl font-bold">
+              <AnimatedCountUp amount={metricsData?.loanPortfolio || 0} />
+            </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Risk Management & Trends */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        <Card>
+        <Card className="bg-white text-blue-700 border border-blue-600 p-4 rounded-lg shadow-md">
           <CardHeader>
             <CardTitle>Deposit Trends</CardTitle>
           </CardHeader>
           <CardContent>
-            <Bar data={accountGrowthData} />
+            <Line data={accountGrowthData} options={lineChartOptions} />
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white text-blue-700 border border-blue-600 p-4 rounded-lg shadow-md">
           <CardHeader>
             <CardTitle>Risk Exposure</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="w-[650px] h-[650px] mx-auto">
-              <Pie data={riskData} />
+            <div className="w-[620px] h-[620px] mx-auto">
+              <Pie data={assetData} options={pieChartOptions} />
             </div>
           </CardContent>
         </Card>
