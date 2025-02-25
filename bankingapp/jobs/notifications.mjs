@@ -50,7 +50,7 @@ const logEmailNotification = async (user, subject, html) => {
         response: ""       // Initialize with an empty response
       }
     );
-    console.log(`Notification logged for ${user.email} - ${subject}`);
+    //console.log(`Notification logged for ${user.email} - ${subject}`);
   } catch (error) {
     console.error("Error logging notification:", error);
   }
@@ -154,7 +154,7 @@ const processUser = async (user) => {
       ]
     );
     if (notificationCheck.documents.length > 0) {
-      console.log(`Notification for "${subject}" already sent to ${user.email}.`);
+      //console.log(`Notification for "${subject}" already sent to ${user.email}.`);
       return;
     }
 
@@ -169,7 +169,7 @@ const processUser = async (user) => {
 // Cron Job 1: Process Users Every 30 Seconds
 // ===========================
 cron.schedule("*/30 * * * * *", async () => {
-  console.log("Checking users for inactivity...");
+  //console.log("Checking users for inactivity...");
 
   try {
     // Fetch all users from the Users collection
@@ -179,17 +179,17 @@ cron.schedule("*/30 * * * * *", async () => {
       await processUser(user);
     }
   } catch (error) {
-    console.error("Error fetching users:", error);
+    //console.error("Error fetching users:", error);
   }
 
-  console.log("User processing complete.");
+  //console.log("User processing complete.");
 });
 
 // ===========================
 // Cron Job 2: Send Pending Emails Every Minute
 // ===========================
 const sendPendingNotifications = async () => {
-  console.log("Checking for pending notifications...");
+  //console.log("Checking for pending notifications...");
 
   try {
     // Query for notifications with status "pending"
@@ -200,7 +200,7 @@ const sendPendingNotifications = async () => {
     );
     const notifications = notificationsResponse.documents;
     if (notifications.length === 0) {
-      console.log("No pending notifications.");
+      //console.log("No pending notifications.");
       return;
     }
 
@@ -214,7 +214,7 @@ const sendPendingNotifications = async () => {
 
       try {
         await transporter.sendMail(mailOptions);
-        console.log(`Email sent to ${notification.email}`);
+        //console.log(`Email sent to ${notification.email}`);
 
         // Update the notification status to "sent" and clear any error response
         await db.updateDocument(
@@ -223,9 +223,9 @@ const sendPendingNotifications = async () => {
           notification.$id,
           { status: "sent", response: "" }
         );
-        console.log(`Notification status updated for ${notification.email}`);
+        //console.log(`Notification status updated for ${notification.email}`);
       } catch (sendError) {
-        console.error(`Error sending email for notification ${notification.$id}:`, sendError);
+        //console.error(`Error sending email for notification ${notification.$id}:`, sendError);
 
         // Update the notification with the error message in the "response" field
         await db.updateDocument(
@@ -237,19 +237,19 @@ const sendPendingNotifications = async () => {
       }
     }
   } catch (error) {
-    console.error("Error fetching pending notifications:", error);
+    //console.error("Error fetching pending notifications:", error);
   }
 };
 
 cron.schedule("*/1 * * * *", () => {
   sendPendingNotifications();
-  console.log("Cron job executed: Checking for pending notifications.");
+  //console.log("Cron job executed: Checking for pending notifications.");
 });
 
 
 cron.schedule("*/1 * * * *", () => {
   sendPendingNotifications();
-  console.log("Cron job executed: Checking for pending notifications.");
+  //console.log("Cron job executed: Checking for pending notifications.");
 });
 
 console.log("Cron jobs scheduled.");
