@@ -1,7 +1,7 @@
 import React from 'react'
 import HeaderBox from '@/components/HeaderBox'
 import TotalBalanceBox from '@/components/TotalBalanceBox';
-import RightSidebar from '@/lib/actions/RightSidebar';
+import RightSidebar from '@/components/RightSidebar';
 import { getLoggedInUser } from '@/lib/actions/user.actions';
 import { getAccount, getAccounts } from '@/lib/actions/bank.actions';
 import RecentsTransactions from '@/components/RecentsTransactions';
