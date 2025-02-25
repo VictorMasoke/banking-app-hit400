@@ -36,6 +36,8 @@ const Home = () => {
           monthlyTotals[month] += parseFloat(transaction.amount);
         });
 
+        console.log(metricsData);
+
         setTransactionsData({
           labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
           datasets: [

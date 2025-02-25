@@ -21,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { createAsset, deleteAssetById } from "@/lib/actions/portfolio.actions";
 import { date } from "zod";
+import { formatDateTime } from "@/lib/utils";
 
 interface Asset {
   $id: string;
@@ -28,9 +29,9 @@ interface Asset {
   assetType: string;
   assetValue: number;
   purchaseDate: string;
-  maturityDate: string;
+  maturityDate: Date;
   intrestRate: number;
-  createdAt: string;
+  $createdAt: Date;
 }
 
 interface AssetsTableProps {
@@ -137,13 +138,13 @@ const AssetsTable: React.FC<AssetsTableProps> = ({ assets: initialAssets }) => {
                 {asset.purchaseDate}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                {asset.maturityDate}
+                {formatDateTime(asset.maturityDate).dateOnly}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                 {asset.intrestRate}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                {new Date(asset.createdAt).toLocaleString()}
+                {formatDateTime(asset.$createdAt).dateOnly}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm">
                 <Button

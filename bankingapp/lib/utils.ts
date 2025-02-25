@@ -76,6 +76,14 @@ export function formatAmount(amount: number): string {
   return formatter.format(amount);
 }
 
+export function formatNumber(value: number): string {
+  return value.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+
 export const parseStringify = (value: any) => JSON.parse(JSON.stringify(value));
 
 export const removeSpecialCharacters = (value: string) => {
@@ -101,6 +109,47 @@ export function formUrlQuery({ params, key, value }: UrlQueryParams) {
     { skipNull: true }
   );
 }
+
+// export function formatDateTime(
+//   input: string | Date
+// ): { date: string; time: string; dateTime: string } {
+//   // Convert the input to a Date object
+//   const dateObj = typeof input === "string" ? new Date(input) : input;
+
+//   // Check if the date is valid
+//   if (isNaN(dateObj.getTime())) {
+//     return {
+//       date: "Invalid Date",
+//       time: "Invalid Date",
+//       dateTime: "Invalid Date",
+//     };
+//   }
+
+//   // Format the date portion (e.g., "February 23, 2025")
+//   const formattedDate = dateObj.toLocaleDateString("en-US", {
+//     year: "numeric",
+//     month: "long",
+//     day: "numeric",
+//   });
+
+//   // Format the time portion (e.g., "10:28:59 PM")
+//   const formattedTime = dateObj.toLocaleTimeString("en-US", {
+//     hour: "numeric",
+//     minute: "2-digit",
+//     second: "2-digit",
+//     hour12: true,
+//   });
+
+//   // Combine both into a dateTime string
+//   const formattedDateTime = `${formattedDate} at ${formattedTime}`;
+
+//   return {
+//     date: formattedDate,
+//     time: formattedTime,
+//     dateTime: formattedDateTime,
+//   };
+// }
+
 
 export function getAccountTypeColors(type: AccountTypes) {
   switch (type) {

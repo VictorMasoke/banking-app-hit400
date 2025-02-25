@@ -36,10 +36,10 @@ import {
   
   interface Transaction {
     name: string;
-    amount: string;
+    amount: number;
     createdAt: string;
     senderId: string;
-    reciverId: string;
+    receiverId: string;
     channel: string;
     category: string;
     $id: string;
