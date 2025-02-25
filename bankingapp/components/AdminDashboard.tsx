@@ -23,10 +23,10 @@ interface AdminDashboardProps {
   metricsData: any;
   assetData: any;
   loading: boolean;
-  accountGrowthData: any;
+  transactionsTracker: any;
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ metricsData, assetData, loading, accountGrowthData }) => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ metricsData, assetData, loading, transactionsTracker }) => {
   if (loading) {
     return <div className="text-center text-blue-700 font-semibold text-lg">Loading Dashboard...</div>;
   }
@@ -104,16 +104,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ metricsData, assetData,
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         <Card className="bg-white text-blue-700 border border-blue-600 p-4 rounded-lg shadow-md">
           <CardHeader>
-            <CardTitle>Deposit Trends</CardTitle>
+            <CardTitle>Transaction Tracker</CardTitle>
           </CardHeader>
           <CardContent>
-            <Line data={accountGrowthData} options={lineChartOptions} />
+            <Line data={transactionsTracker} options={lineChartOptions} />
           </CardContent>
         </Card>
 
         <Card className="bg-white text-blue-700 border border-blue-600 p-4 rounded-lg shadow-md">
           <CardHeader>
-            <CardTitle>Risk Exposure</CardTitle>
+            <CardTitle>Asset Allocation</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="w-[620px] h-[620px] mx-auto">

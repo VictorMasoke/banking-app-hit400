@@ -1,12 +1,4 @@
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table"
 import { transactionCategoryStyles } from "@/constants"
 import { cn, formatAmount, formatDateTime, getTransactionStatus, removeSpecialCharacters } from "@/lib/utils"
 
@@ -28,7 +20,7 @@ const CategoryBadge = ({ category }: CategoryBadgeProps) => {
 
 const TransactionsTable = ({ transactions = [] }: TransactionTableProps) => {
 
-  console.log(transactions);
+  //console.log(transactions);
 
   if (!Array.isArray(transactions)) {
     console.error("Transactions data is not an array:", transactions);

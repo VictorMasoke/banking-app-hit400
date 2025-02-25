@@ -59,3 +59,20 @@ export const getTransactionsByBankId = async ({bankId}: getTransactionsByBankIdP
     console.log(error);
   }
 }
+
+export const getAllTransactions = async () => {
+  try {
+    const { database } = await createAdminClient();
+    const allTransactions = await database.listDocuments(
+      DATABASE_ID!,
+      TRANSACTION_COLLECTION_ID!,
+    )
+
+    const transactions = {
+      ...allTransactions.documents,
+    }
+    return parseStringify(transactions);
+  } catch (error) {
+    console.log(error);
+  }
+}

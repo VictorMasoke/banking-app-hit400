@@ -29,17 +29,22 @@ export const sidebarLinksAdmin = [
     label: "Home",
   },
   {
-    imgURL: "/icons/money-send.svg",
+    imgURL: "/icons/deposit.svg",
     route: "/admin/portfolio",
     label: "Asset Portfolio",
   },
   {
     imgURL: "/icons/transaction.svg",
+    route: "/admin/transaction-history",
+    label: "Transactions Log",
+  },
+  {
+    imgURL: "/icons/notifications.svg",
     route: "/admin/notification-log",
     label: "Notification Log",
   },
   {
-    imgURL: "/icons/dollar-circle.svg",
+    imgURL: "/icons/bank-transfer.svg",
     route: "/admin/user-banks",
     label: "User Banks",
   },

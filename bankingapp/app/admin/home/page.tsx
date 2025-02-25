@@ -5,12 +5,17 @@ import AdminDashboard from "@/components/AdminDashboard";
 import React, { useEffect, useState } from "react";
 import { getLoggedInUser } from "@/lib/actions/user.actions";
 import { calculateBankMetrics, getAssetAllocation } from "@/lib/actions/portfolio.actions";
+import { getAllTransactions } from "@/lib/actions/transaction.action";
 
 const Home = () => {
   const [loggedIn, setLoggedIn] = useState<{ firstName: string } | null>(null);
   const [metrics, setMetrics] = useState(null);
   const [assetAllocationData, setAssetAllocationData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [transactionsData, setTransactionsData] = useState<{ labels: string[]; datasets: any[] }>({
+    labels: [],
+    datasets: [],
+  });
 
   useEffect(() => {
     const fetchUserAndData = async () => {
@@ -20,6 +25,31 @@ const Home = () => {
 
         const metricsData = await calculateBankMetrics();
         const assetData = await getAssetAllocation();
+        const allTransactions = await getAllTransactions();
+        const transactionsList = Object.values(allTransactions); // Convert to array
+
+        // Process transactions to get totals per month
+        const monthlyTotals = new Array(12).fill(0);
+        transactionsList.forEach(transaction => {
+          const date = new Date(transaction.createdAt);
+          const month = date.getMonth(); // 0 = Jan, 11 = Dec
+          monthlyTotals[month] += parseFloat(transaction.amount);
+        });
+
+        setTransactionsData({
+          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          datasets: [
+            {
+              label: "Total Transactions ($)",
+              //data: [23, 23, 41, 21, 12, 21, 23, 12, 13, 6, 9, 24],
+              data: monthlyTotals.map(amount => amount),
+              borderColor: "#2563EB",
+              backgroundColor: "rgba(37, 99, 235, 0.2)",
+              tension: 0.4,
+              fill: true,
+            },
+          ],
+        });
 
         setMetrics(metricsData);
         setAssetAllocationData(assetData);
@@ -32,20 +62,6 @@ const Home = () => {
 
     fetchUserAndData();
   }, []);
-
-  const accountGrowthData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    datasets: [
-      {
-        label: "Total Deposits ($M)",
-        data: [5, 8, 12, 18, 25, 33, 42, 50, 58, 67, 75, 85],
-        borderColor: "#2563EB",
-        backgroundColor: "rgba(37, 99, 235, 0.2)",
-        tension: 0.4,
-        fill: true,
-      },
-    ],
-  };
 
   return (
     <section className="p-6">
@@ -62,7 +78,7 @@ const Home = () => {
         metricsData={metrics}
         assetData={assetAllocationData}
         loading={loading}
-        accountGrowthData={accountGrowthData}
+        transactionsTracker={transactionsData}
       />
     </section>
   );

@@ -24,6 +24,7 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signIn, signUp } from "@/lib/actions/user.actions";
 import PlaidLink from "./PlaidLink";
+import { resolve } from "path";
 
 const AuthForm = ({ type }: { type: string }) => {
   const [user, setUser] = useState(null);
@@ -52,11 +53,19 @@ const AuthForm = ({ type }: { type: string }) => {
           password: data.password,
         })
 
+        if (response?.error) {
+          alert(response.error);
+          setIsLoading(false);
+          return;
+        }
+
         if (response.role === "user") {
           router.push('/')
-        } else {
+        } else if (response.role === "admin") {
           router.push('/admin/home')
-        }
+        } else (
+          console.log("An error occured during log in.")
+        );
       }
 
       if(type === 'sign-up') {
