@@ -26,11 +26,20 @@ import { signIn, signUp } from "@/lib/actions/user.actions";
 import PlaidLink from "./PlaidLink";
 import { resolve } from "path";
 
+import { AlertCircle } from "lucide-react"
+ 
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
+
 const AuthForm = ({ type }: { type: string }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const formSchema = authFormSchema(type);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -43,21 +52,15 @@ const AuthForm = ({ type }: { type: string }) => {
 
   // 2. Define a submit handler.
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
+    
     
     try {
-      
+      setIsLoading(true);
       if(type === 'sign-in') {
         const response = await signIn({
           email: data.email,
           password: data.password,
         })
-
-        if (response?.error) {
-          alert(response.error);
-          setIsLoading(false);
-          return;
-        }
 
         if (response.role === "user") {
           router.push('/')
@@ -86,18 +89,25 @@ const AuthForm = ({ type }: { type: string }) => {
 
         setUser(newUser);
       }
-
-      setIsLoading(false);
+      
     } catch (error) {
-      console.log(error)
-    } finally {
+      setErrorMessage(error?.message || "An unexpected error occurred");
       setIsLoading(false);
+      console.log(error)
     }
     
   }
 
   return (
     <section className="auth-form">
+      {errorMessage && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      )}
+
       <header className="flex flex-col gap-5 md:gap-8">
         <Link href="/" className="cursor-pointer flex items-center gap-1">
           <Image
