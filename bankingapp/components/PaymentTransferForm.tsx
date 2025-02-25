@@ -26,6 +26,14 @@ import {
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 
+import { AlertCircle } from "lucide-react"
+ 
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
+
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
   name: z.string().min(4, "Transfer note is too short"),
@@ -37,6 +45,7 @@ const formSchema = z.object({
 const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,9 +59,10 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
   });
 
   const submit = async (data: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
+    
 
     try {
+      setIsLoading(true);
       const receiverAccountId = decryptId(data.sharableId);
       const receiverBank = await getBankByAccountId({
         accountId: receiverAccountId,
@@ -88,10 +98,12 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
         }
       }
     } catch (error) {
+      setErrorMessage(error?.message || "Submitting create transfer request failed");
+      setIsLoading(false);
       console.error("Submitting create transfer request failed: ", error);
     }
 
-    setIsLoading(false);
+    
   };
 
   return (
