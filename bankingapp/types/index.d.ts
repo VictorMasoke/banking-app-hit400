@@ -322,6 +322,12 @@ declare interface CreateTransactionProps {
   email: string;
 }
 
+declare interface EmailSendProps {
+  email: string;
+  subject: string;
+  html: string;
+}
+
 declare interface getTransactionsByBankIdProps {
   bankId: string;
 }

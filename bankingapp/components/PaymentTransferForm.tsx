@@ -26,13 +26,10 @@ import {
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 
-import { AlertCircle } from "lucide-react"
- 
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { sendEmailNotification } from "@/lib/actions/email.actions";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -59,8 +56,6 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
   });
 
   const submit = async (data: z.infer<typeof formSchema>) => {
-    
-
     try {
       setIsLoading(true);
       const receiverAccountId = decryptId(data.sharableId);
@@ -98,16 +93,32 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
         }
       }
     } catch (error) {
-      setErrorMessage(error?.message || "Submitting create transfer request failed");
+      setErrorMessage(
+        error?.message || "Submitting create transfer request failed"
+      );
+      // Send email notification about transaction failure to sender
+      await sendEmailNotification({
+        email: data.email,
+        subject: "Transaction Failed",
+        html: `<p>Your transaction has failed. Error details: ${
+          error?.message || "Unknown error"
+        }</p>`,
+      });
       setIsLoading(false);
       console.error("Submitting create transfer request failed: ", error);
     }
-
-    
   };
 
   return (
     <Form {...form}>
+      {errorMessage && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      )}
+
       <form onSubmit={form.handleSubmit(submit)} className="flex flex-col">
         <FormField
           control={form.control}

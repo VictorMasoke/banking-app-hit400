@@ -95,7 +95,7 @@ export const signIn = async ({ email, password }: signInProps) => {
     return users.documents.length > 0 ? parseStringify(users.documents[0]) : null;
   } catch (error) {
     console.error("Error", error);
-    return { error: error.message || "An error occurred during sign in." };
+    throw error;
   }
 };
 
