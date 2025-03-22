@@ -3,6 +3,7 @@ import SideBar from "@/components/SideBar";
 import { getLoggedInUser } from "@/lib/actions/user.actions";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import TawkChat from "@/components/TawkChat";
 
 export default async function RootLayout({
   children,
@@ -28,6 +29,9 @@ export default async function RootLayout({
           </div>
           {children}
         </div>
+
+        {/* Load Tawk.to chat */}
+      <TawkChat />
         
     </main>        
   );
