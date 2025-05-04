@@ -76,6 +76,7 @@ const AuthForm = ({ type }: { type: string }) => {
           country: data.country!,
           security_question: data.securityQuestion!,
           security_answer: data.securityAnswer!,
+
         };
 
         await signUp(userData);
