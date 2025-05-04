@@ -1,91 +1,134 @@
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table"
-import { transactionCategoryStyles } from "@/constants"
-import { cn, formatAmount, formatDateTime, getTransactionStatus, removeSpecialCharacters } from "@/lib/utils"
+// components/TransactionsTable.tsx
+import { formatAmount, formatDateTime } from '@/lib/utils';
+import { getUserTransactions } from '@/lib/actions/user.banking';
+import { Pagination } from './Pagination';
 
-const CategoryBadge = ({ category }: CategoryBadgeProps) => {
-  const {
-    borderColor,
-    backgroundColor,
-    textColor,
-    chipBackgroundColor,
-   } = transactionCategoryStyles[category as keyof typeof transactionCategoryStyles] || transactionCategoryStyles.default
-   
-  return (
-    <div className={cn('category-badge', borderColor, chipBackgroundColor)}>
-      <div className={cn('size-2 rounded-full', backgroundColor)} />
-      <p className={cn('text-[12px] font-medium', textColor)}>{category}</p>
-    </div>
-  )
-} 
-
-const TransactionsTable = ({ transactions = [] }: TransactionTableProps) => {
-
-  //console.log(transactions);
-
-  if (!Array.isArray(transactions)) {
-    console.error("Transactions data is not an array:", transactions);
-    return <p className="text-center text-red-500">No transactions available.</p>;
-  }
-
-  return (
-    <Table>
-      <TableHeader className="bg-[#f9fafb]">
-        <TableRow>
-          <TableHead className="px-2">Transaction</TableHead>
-          <TableHead className="px-2">Amount</TableHead>
-          <TableHead className="px-2">Status</TableHead>
-          <TableHead className="px-2">Date</TableHead>
-          <TableHead className="px-2 max-md:hidden">Channel</TableHead>
-          <TableHead className="px-2 max-md:hidden">Category</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {transactions.map((t: Transaction) => {
-          const status = getTransactionStatus(new Date(t.date))
-          const amount = formatAmount(t.amount)
-
-          const isDebit = t.type === 'debit';
-          const isCredit = t.type === 'credit';
-
-          return (
-            <TableRow key={t.id} className={`${isDebit || amount[0] === '-' ? 'bg-[#FFFBFA]' : 'bg-[#F6FEF9]'} !over:bg-none !border-b-DEFAULT`}>
-              <TableCell className="max-w-[250px] pl-2 pr-10">
-                <div className="flex items-center gap-3">
-                  <h1 className="text-14 truncate font-semibold text-[#344054]">
-                    {removeSpecialCharacters(t.name)}
-                  </h1>
-                </div>
-              </TableCell>
-
-              <TableCell className={`pl-2 pr-10 font-semibold ${
-                isDebit || amount[0] === '-' ?
-                  'text-[#f04438]'
-                  : 'text-[#039855]'
-              }`}>
-                {isDebit ? `-${amount}` : isCredit ? amount : amount}
-              </TableCell>
-
-              <TableCell className="pl-2 pr-10">
-                <CategoryBadge category={status} /> 
-              </TableCell>
-
-              <TableCell className="min-w-32 pl-2 pr-10">
-                {formatDateTime(new Date(t.date)).dateTime}
-              </TableCell>
-
-              <TableCell className="pl-2 pr-10 capitalize min-w-24">
-               {t.paymentChannel}
-              </TableCell>
-
-              <TableCell className="pl-2 pr-10 max-md:hidden">
-               <CategoryBadge category={t.category} /> 
-              </TableCell>
-            </TableRow>
-          )
-        })}
-      </TableBody>
-    </Table>
-  )
+interface TransactionsTableProps {
+  currentPage?: number;
+  filters?: Record<string, string>;
 }
 
-export default TransactionsTable
+export default async function TransactionsTable({
+  currentPage = 1,
+  filters = {},
+}: TransactionsTableProps) {
+  const transactionsData = await getUserTransactions(currentPage, 10, filters);
+
+  if (!transactionsData) {
+    return (
+      <div className="text-gray-500 py-8 text-center">
+        Failed to load transactions. Please try again later.
+      </div>
+    );
+  }
+
+  const { transactions, summary, pagination } = transactionsData.data;
+
+  return (
+    <div className="space-y-6">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white p-4 rounded-lg shadow">
+          <h3 className="text-sm font-medium text-gray-500">Total Transactions</h3>
+          <p className="text-2xl font-semibold">{summary.transaction_count}</p>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <h3 className="text-sm font-medium text-gray-500">Total Deposits</h3>
+          <p className="text-2xl font-semibold text-green-600">
+            {formatAmount(summary.total_deposits)}
+          </p>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <h3 className="text-sm font-medium text-gray-500">Total Withdrawals</h3>
+          <p className="text-2xl font-semibold text-red-600">
+            {formatAmount(summary.total_withdrawals)}
+          </p>
+        </div>
+      </div>
+
+      {/* Transactions Table */}
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Account
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Type
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Description
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Amount
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Balance
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {transactions.map((transaction) => (
+                <tr key={transaction.transaction_id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {transaction.transaction_date}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">
+                      {transaction.account_number}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {transaction.account_type}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        transaction.transaction_type === 'deposit'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}
+                    >
+                      {transaction.transaction_type}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    {transaction.description || 'N/A'}
+                  </td>
+                  <td
+                    className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${
+                      transaction.transaction_type === 'deposit'
+                        ? 'text-green-600'
+                        : 'text-red-600'
+                    }`}
+                  >
+                    {transaction.transaction_type === 'deposit' ? '+' : '-'}
+                    {formatAmount(transaction.amount)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {formatAmount(transaction.balance_after)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={pagination.total_pages}
+            totalItems={pagination.total}
+            itemsPerPage={pagination.limit}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}

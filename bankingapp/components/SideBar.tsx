@@ -7,7 +7,6 @@ import { sidebarLinks, sidebarLinksAdmin } from "@/constants"
 import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
 import Footer from "./Footer"
-import PlaidLink from "./PlaidLink"
 
 const SideBar = ({user}: SiderbarProps) => {
   const pathname = usePathname();
@@ -29,15 +28,15 @@ const SideBar = ({user}: SiderbarProps) => {
                 <h1 className="sidebar-logo">Basel Banking</h1>
             </Link>
 
-            
+
 
             {links.map((item) => {
-                const isActive = 
+                const isActive =
                 pathname === item.route || pathname.startsWith(`${item.route}/`)
 
                 return (
                     <Link href={item.route} key={item.label} className={cn ('sidebar-link', {'bg-bank-gradient': isActive })}>
-                        
+
 
                         <div className="relative size-6">
                             <Image
@@ -54,8 +53,7 @@ const SideBar = ({user}: SiderbarProps) => {
                     </Link>
                 )
             })}
-            
-            {user.role !== "admin" && <PlaidLink user={user} />}
+
         </nav>
 
         <Footer user={user}/>

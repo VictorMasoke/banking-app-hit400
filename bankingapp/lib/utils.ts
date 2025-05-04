@@ -8,6 +8,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const generateResetCode = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
+};
+
 // FORMAT DATE TIME
 export const formatDateTime = (dateString: Date) => {
   const dateTimeOptions: Intl.DateTimeFormatOptions = {
@@ -75,6 +79,19 @@ export function formatAmount(amount: number): string {
 
   return formatter.format(amount);
 }
+
+export function formatDate(date: Date | string): string {
+  const d = typeof date === "string" ? new Date(date) : date;
+
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",  // e.g., Jan, Feb
+    day: "2-digit",
+  });
+
+  return formatter.format(d);
+}
+
 
 export function formatNumber(value: number): string {
   return value.toLocaleString("en-US", {
@@ -245,17 +262,21 @@ export const getTransactionStatus = (date: Date) => {
 };
 
 export const authFormSchema = (type: string) => z.object({
-  // sign up
-  firstName: type === 'sign-in' ? z.string().optional() : z.string().min(3),
-  lastName: type === 'sign-in' ? z.string().optional() : z.string().min(3),
-  address1: type === 'sign-in' ? z.string().optional() : z.string().max(50),
-  city: type === 'sign-in' ? z.string().optional() : z.string().min(3).max(30),
-  postalCode: type === 'sign-in' ? z.string().optional() : z.string().min(3).max(10),
-  dateOfBirth: type === 'sign-in' ? z.string().optional() : z.string().min(3),
-  ssn: type === 'sign-in' ? z.string().optional() : z.string().min(3),
-  state: type === 'sign-in' ? z.string().optional() : z.string().min(1),
-
-  // sign in
+  // Common fields
   email: z.string().email(),
   password: z.string().min(8),
+  role: z.string().optional(),
+
+  // Sign-up specific fields
+  firstName: type === 'sign-in' ? z.string().optional() : z.string().min(1),
+  lastName: type === 'sign-in' ? z.string().optional() : z.string().min(1),
+  phone: type === 'sign-in' ? z.string().optional() : z.string().min(6),
+  dateOfBirth: type === 'sign-in' ? z.string().optional() : z.string().min(8),
+  address: type === 'sign-in' ? z.string().optional() : z.string().min(5),
+  city: type === 'sign-in' ? z.string().optional() : z.string().min(2),
+  state: type === 'sign-in' ? z.string().optional() : z.string().min(2),
+  zipCode: type === 'sign-in' ? z.string().optional() : z.string().min(3),
+  country: type === 'sign-in' ? z.string().optional() : z.string().min(2),
+  securityQuestion: type === 'sign-in' ? z.string().optional() : z.string().min(10),
+  securityAnswer: type === 'sign-in' ? z.string().optional() : z.string().min(2),
 });

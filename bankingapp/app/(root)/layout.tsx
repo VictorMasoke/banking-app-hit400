@@ -1,6 +1,6 @@
 import MobileNav from "@/components/MobileNav";
 import SideBar from "@/components/SideBar";
-import { getLoggedInUser } from "@/lib/actions/user.actions";
+import {getLoggedInUser} from "@/lib/actions/auth.actions";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import TawkChat from "@/components/TawkChat";
@@ -11,7 +11,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const loggedIn = await getLoggedInUser(); 
+  const loggedIn = await getLoggedInUser();
 
   if(!loggedIn) redirect('/sign-in')
 
@@ -32,7 +32,7 @@ export default async function RootLayout({
 
         {/* Load Tawk.to chat */}
       <TawkChat />
-        
-    </main>        
+
+    </main>
   );
 }

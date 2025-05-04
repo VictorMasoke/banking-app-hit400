@@ -1,13 +1,14 @@
-import { logoutAccount } from "@/lib/actions/user.actions";
+import {getLoggedInUser} from "@/lib/actions/auth.actions";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { logout } from "@/lib/actions/auth.actions";
 
 const Footer = ({ user, type = "desktop" }: FooterProps) => {
   const router = useRouter();
 
   const handleLogout = async () => {
-    const loggedOut = await logoutAccount();
+    const loggedOut = await logout();
 
     if (loggedOut) router.push("/sign-in");
   };
@@ -15,19 +16,19 @@ const Footer = ({ user, type = "desktop" }: FooterProps) => {
   return (
     <footer className="footer">
       <div className={type === "mobile" ? "footer_name_mobile" : "footer_name"}>
-        <p className="text-xl font-bold text-gray-700">{user?.firstName[0]}</p>
+        <p className="text-xl font-bold text-gray-700">{user?.user_name[0]}</p>
       </div>
 
       <div
         className={type === "mobile" ? "footer_email_mobile" : "footer_email"}
       >
         <h1 className="text-14 truncate text-gray-700 font-semibold">
-          {user?.firstName} |{" "}
+          {user?.user_name} |{" "}
           <span className="font-extrabold">{user?.role?.toUpperCase()}</span>
         </h1>
 
         <p className="text-14 truncate font-normal text-gray-600">
-          {user?.email}
+          {user?.email || ""}
         </p>
       </div>
 

@@ -2,24 +2,23 @@ import React from 'react'
 import HeaderBox from '@/components/HeaderBox'
 import TotalBalanceBox from '@/components/TotalBalanceBox';
 import RightSidebar from '@/components/RightSidebar';
-import { getLoggedInUser } from '@/lib/actions/user.actions';
-import { getAccount, getAccounts } from '@/lib/actions/bank.actions';
-import RecentsTransactions from '@/components/RecentsTransactions';
+import { getLoggedInUser } from "@/lib/actions/auth.actions";
+import TransactionsTable from '@/components/TransactionsTable';
+import { getCustomerAccounts } from '@/lib/actions/user.banking';
 
-const Home = async ({ searchParams: {id, page}} :SearchParamProps) => {
-  //clearImmediate
-  const currentPage = Number(page as string) || 1;
+interface SearchParamProps {
+  searchParams: {
+    id?: string;
+    page?: string;
+  }
+}
+
+const Home = async ({ searchParams: { id, page } }: SearchParamProps) => {
   const loggedIn = await getLoggedInUser();
-  const accounts = await getAccounts({ 
-    userId: loggedIn.$id 
-  })
+  const accountsData = await getCustomerAccounts();
 
-  if(!accounts) return;
-  
-  const accountsData = accounts?.data;
-  const appwriteItemId = (id as string) || accountsData[0]?.appwriteItemId;
-
-  const account = await getAccount({ appwriteItemId })
+  // Extract accounts from the response
+  const accounts = accountsData?.data?.accounts || [];
 
   return (
     <section className='home'>
@@ -28,29 +27,17 @@ const Home = async ({ searchParams: {id, page}} :SearchParamProps) => {
           <HeaderBox
             type="greeting"
             title="Welcome"
-            user={loggedIn?.firstName || "Guest"}
+            user={loggedIn?.user_name || "Guest"}
             subtext="Access and manage your account and transactions efficiently"
-          />
-
-          <TotalBalanceBox
-            accounts={[accountsData]}
-            totalBanks={accounts?.totalBanks}
-            totalCurrentBalance={accounts?.totalCurrentBalance}
           />
         </header>
 
-        <RecentsTransactions
-        accounts={accountsData}
-        transactions={account?.transactions}
-        appwriteItemId={appwriteItemId}
-        page={currentPage}
-        />
+        <TransactionsTable />
       </div>
 
       <RightSidebar
         user={loggedIn}
-        transactions={accounts?.transactions}
-        banks={accountsData?.slice(0, 2)}
+        accountsData={accountsData}
       />
     </section>
   )

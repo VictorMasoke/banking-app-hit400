@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -20,18 +20,17 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { createAsset, deleteAssetById } from "@/lib/actions/portfolio.actions";
-import { date } from "zod";
 import { formatDateTime } from "@/lib/utils";
 
 interface Asset {
-  $id: string;
-  assetName: string;
-  assetType: string;
-  assetValue: number;
-  purchaseDate: string;
-  maturityDate: Date;
-  intrestRate: number;
-  $createdAt: Date;
+  asset_id: string;
+  asset_name: string;
+  asset_type: string;
+  asset_value: number;
+  purchase_date: string;
+  maturity_date?: string;
+  interest_rate?: number;
+  created_at: string;
 }
 
 interface AssetsTableProps {
@@ -41,55 +40,69 @@ interface AssetsTableProps {
 const AssetsTable: React.FC<AssetsTableProps> = ({ assets: initialAssets }) => {
   const [assets, setAssets] = useState<Asset[]>(initialAssets);
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Form state for adding a new asset
   const [newAsset, setNewAsset] = useState({
-    assetName: "",
-    assetType: "",
-    assetValue: 0,
-    purchaseDate: "",
-    maturityDate: "",
-    intrestRate: 0,
-    createdAt: Date.now().toString(),
+    asset_name: "",
+    asset_type: "",
+    asset_value: 0,
+    purchase_date: "",
+    maturity_date: "",
+    interest_rate: 0,
   });
 
-  // Add a new asset using the server function
+  // Add a new asset
   const handleAddAsset = async () => {
+    setIsLoading(true);
     try {
-      const createdAsset = await createAsset(newAsset);
-      // Update local state with the new asset
+      const createdAsset = await createAsset({
+        asset_name: newAsset.asset_name,
+        asset_type: newAsset.asset_type,
+        asset_value: Number(newAsset.asset_value),
+        purchase_date: newAsset.purchase_date,
+        maturity_date: newAsset.maturity_date || undefined,
+        interest_rate: Number(newAsset.interest_rate) || undefined,
+      });
+
       setAssets([...assets, createdAsset]);
       setOpen(false);
-      // Reset form fields
       setNewAsset({
-        assetName: "",
-        assetType: "",
-        assetValue: 0,
-        purchaseDate: "",
-        maturityDate: "",
-        intrestRate: 0,
-        createdAt: Date.now().toString(),
+        asset_name: "",
+        asset_type: "",
+        asset_value: 0,
+        purchase_date: "",
+        maturity_date: "",
+        interest_rate: 0,
       });
     } catch (error) {
       console.error("Error adding asset:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Delete an asset using the server function and update state
+  // Delete an asset
   const handleDeleteAsset = async (id: string) => {
+    setIsLoading(true);
     try {
-      await deleteAssetById({ id });
-      setAssets(assets.filter((asset) => asset.$id !== id));
+      await deleteAssetById(id); // Now passing just the string ID
+      setAssets(assets.filter((asset) => asset.asset_id !== id));
     } catch (error) {
       console.error("Error deleting asset:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-end">
-        <Button onClick={() => setOpen(true)}>Add New Asset</Button>
+        <Button onClick={() => setOpen(true)} disabled={isLoading}>
+          {isLoading ? "Processing..." : "Add New Asset"}
+        </Button>
       </div>
+
       <Table className="min-w-full divide-y divide-gray-200">
         <TableHeader className="bg-gray-50">
           <TableRow>
@@ -122,34 +135,35 @@ const AssetsTable: React.FC<AssetsTableProps> = ({ assets: initialAssets }) => {
         <TableBody className="bg-white divide-y divide-gray-200">
           {assets.map((asset) => (
             <TableRow
-              key={asset.$id}
+              key={asset.asset_id}
               className="hover:bg-gray-100 transition-colors duration-150"
             >
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {asset.assetName}
+                {asset.asset_name}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                {asset.assetType}
+                {asset.asset_type}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                {asset.assetValue.toLocaleString()}
+                {asset.asset_value.toLocaleString()}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                {asset.purchaseDate}
+                {asset.purchase_date}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                {formatDateTime(asset.maturityDate).dateOnly}
+                {asset.maturity_date ? asset.maturity_date : "N/A"}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                {asset.intrestRate}
+                {asset.interest_rate || "N/A"}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                {formatDateTime(asset.$createdAt).dateOnly}
+                {asset.created_at}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm">
                 <Button
                   variant="destructive"
-                  onClick={() => handleDeleteAsset(asset.$id)}
+                  onClick={() => handleDeleteAsset(asset.asset_id)}
+                  disabled={isLoading}
                 >
                   Delete
                 </Button>
@@ -159,7 +173,7 @@ const AssetsTable: React.FC<AssetsTableProps> = ({ assets: initialAssets }) => {
         </TableBody>
       </Table>
 
-      {/* Modal for adding a new asset */}
+      {/* Add Asset Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[500px] p-6">
           <DialogHeader>
@@ -178,9 +192,9 @@ const AssetsTable: React.FC<AssetsTableProps> = ({ assets: initialAssets }) => {
               <Input
                 className="w-full h-10 px-3 py-2 text-base"
                 placeholder="Asset Name"
-                value={newAsset.assetName}
+                value={newAsset.asset_name}
                 onChange={(e) =>
-                  setNewAsset({ ...newAsset, assetName: e.target.value })
+                  setNewAsset({ ...newAsset, asset_name: e.target.value })
                 }
               />
             </div>
@@ -190,12 +204,18 @@ const AssetsTable: React.FC<AssetsTableProps> = ({ assets: initialAssets }) => {
               </label>
               <select
                 className="w-full h-10 px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-                value={newAsset.assetType}
-                onChange={(e) => setNewAsset({ ...newAsset, assetType: e.target.value })}
+                value={newAsset.asset_type}
+                onChange={(e) =>
+                  setNewAsset({ ...newAsset, asset_type: e.target.value })
+                }
               >
                 <option value="">Select Asset Type</option>
-                <option value="Cash and Cash Equivalents">Cash and Cash Equivalents</option>
-                <option value="Investment Securities">Investment Securities</option>
+                <option value="Cash and Cash Equivalents">
+                  Cash and Cash Equivalents
+                </option>
+                <option value="Investment Securities">
+                  Investment Securities
+                </option>
                 <option value="Loans">Loans</option>
                 <option value="Real Estate">Real Estate</option>
                 <option value="Fixed Assets">Fixed Assets</option>
@@ -210,11 +230,11 @@ const AssetsTable: React.FC<AssetsTableProps> = ({ assets: initialAssets }) => {
                 type="number"
                 className="w-full h-10 px-3 py-2 text-base"
                 placeholder="Asset Value"
-                value={newAsset.assetValue}
+                value={newAsset.asset_value}
                 onChange={(e) =>
                   setNewAsset({
                     ...newAsset,
-                    assetValue: Number(e.target.value),
+                    asset_value: Number(e.target.value),
                   })
                 }
               />
@@ -227,9 +247,9 @@ const AssetsTable: React.FC<AssetsTableProps> = ({ assets: initialAssets }) => {
                 type="date"
                 className="w-full h-10 px-3 py-2 text-base"
                 placeholder="Purchase Date"
-                value={newAsset.purchaseDate}
+                value={newAsset.purchase_date}
                 onChange={(e) =>
-                  setNewAsset({ ...newAsset, purchaseDate: e.target.value })
+                  setNewAsset({ ...newAsset, purchase_date: e.target.value })
                 }
               />
             </div>
@@ -241,9 +261,9 @@ const AssetsTable: React.FC<AssetsTableProps> = ({ assets: initialAssets }) => {
                 type="date"
                 className="w-full h-10 px-3 py-2 text-base"
                 placeholder="Maturity Date"
-                value={newAsset.maturityDate}
+                value={newAsset.maturity_date}
                 onChange={(e) =>
-                  setNewAsset({ ...newAsset, maturityDate: e.target.value })
+                  setNewAsset({ ...newAsset, maturity_date: e.target.value })
                 }
               />
             </div>
@@ -255,18 +275,20 @@ const AssetsTable: React.FC<AssetsTableProps> = ({ assets: initialAssets }) => {
                 type="number"
                 className="w-full h-10 px-3 py-2 text-base"
                 placeholder="Interest Rate (%)"
-                value={newAsset.intrestRate}
+                value={newAsset.interest_rate}
                 onChange={(e) =>
                   setNewAsset({
                     ...newAsset,
-                    intrestRate: Number(e.target.value),
+                    interest_rate: Number(e.target.value),
                   })
                 }
               />
             </div>
           </div>
           <DialogFooter className="mt-6">
-            <Button onClick={handleAddAsset}>Save Asset</Button>
+            <Button onClick={handleAddAsset} disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save Asset"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

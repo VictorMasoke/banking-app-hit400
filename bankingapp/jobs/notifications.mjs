@@ -83,6 +83,8 @@ const processUser = async (user) => {
 
     let subject, html;
 
+
+
     if (transactionResponse.documents.length === 0) {
       // No transactions: send a welcome notification.
       subject = "Welcome to Bezell Bank!";

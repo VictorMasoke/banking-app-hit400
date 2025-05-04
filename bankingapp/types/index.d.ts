@@ -18,6 +18,7 @@ declare type SignUpParams = {
   ssn: string;
   state: string;
   password: string;
+  role: string;
 };
 
 declare type LoginUser = {
@@ -26,20 +27,14 @@ declare type LoginUser = {
 };
 
 declare type User = {
-  $id: string;
+  customer_id: int;
+  user_id: int;
   email: string;
-  userId: string;
-  dwollaCustomerUrl: string;
-  dwollaCustomerId: string;
-  firstName: string;
-  lastName: string;
-  name: string;
-  address1: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  dateOfBirth: string;
-  ssn: string;
+  user_name: string;
+  last_login: string;
+  is_active: int;
+  created_at: string;
+  updated_at: string;
   role: string;
 };
 
@@ -227,7 +222,6 @@ declare interface FooterProps {
 
 declare interface RightSidebarProps {
   user: User;
-  transactions: Transaction[];
   banks: Bank[] & Account[];
 }
 
@@ -412,3 +406,23 @@ declare interface TransactionHistoryProps {
   account: AccountData;
 }
 
+// types/asset.d.ts
+interface Asset {
+  asset_id: string;
+  asset_name: string;
+  asset_type: string;
+  asset_value: number;
+  purchase_date: string;
+  maturity_date?: string;
+  interest_rate?: number;
+  created_at: string;
+}
+
+interface AssetFormData {
+  assetName: string;
+  assetType: string;
+  assetValue: number;
+  purchaseDate: string;
+  maturityDate?: string;
+  interestRate?: number;
+}
