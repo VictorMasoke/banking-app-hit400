@@ -224,3 +224,41 @@ export const createAccount = async (accountData: {
     return { error: "Internal server error", status: 500 };
   }
 };
+
+export const depositFunds = async (depositData: {
+  account_number: string;
+  amount: number;
+  description?: string;
+}) => {
+  const cookieStore = cookies();
+  const token = cookieStore.get('bankingToken')?.value;
+
+  if (!token) {
+    return { error: 'Authentication required' };
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/transactions/deposit`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(depositData)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { error: data.message || 'Deposit failed' };
+    }
+
+    return {
+      reference: data.data.reference,
+      new_balance: data.data.new_balance
+    };
+  } catch (error) {
+    console.error('Deposit error:', error);
+    return { error: 'Internal server error' };
+  }
+};

@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle, } from "@/components/ui/alert";
 import { signIn, signUp } from "@/lib/actions/auth.actions";
+import { sendNotification } from "@/lib/actions/notifications.actions";
 
 const AuthForm = ({ type }: { type: string }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -80,6 +81,9 @@ const AuthForm = ({ type }: { type: string }) => {
         };
 
         await signUp(userData);
+
+        await sendNotification({email: data.email, subject: 'Welcome to Basel Banking', content: `<!DOCTYPE html> <html> <head> <meta charset="UTF-8"> <title>Welcome to Basel Banking</title> </head> <body style="margin:0; padding:0; font-family:Arial, sans-serif; background-color:#f4f4f4;"> <table align="center" width="100%" style="max-width:600px; margin:auto; background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1);"> <tr> <td style="background-color:#003366; color:#ffffff; padding:20px 30px; text-align:center;"> <h1 style="margin:0; font-size:24px;">Welcome to Basel Banking</h1> </td> </tr> <tr> <td style="padding:30px;"> <p style="font-size:16px; color:#333333;">Dear Valued Customer,</p> <p style="font-size:16px; color:#333333;"> We're thrilled to have you with us! At <strong>Basel Banking</strong>, we are committed to providing you with secure, innovative, and customer-friendly financial services. </p> <p style="font-size:16px; color:#333333;"> You can now access your dashboard, manage your accounts, and explore our latest features designed to help you bank smarter. </p> <p style="font-size:16px; color:#333333;">If you have any questions, our support team is just a click away.</p> <div style="margin:30px 0; text-align:center;"> <a href="http://localhost:3000/" style="display:inline-block; padding:12px 24px; background-color:#003366; color:#ffffff; text-decoration:none; border-radius:4px;">Access Your Account</a> </div> <p style="font-size:14px; color:#777777;">Thank you for choosing Basel Banking.</p> </td> </tr> <tr> <td style="background-color:#f0f0f0; text-align:center; padding:15px; font-size:12px; color:#999999;"> &copy; 2025 Basel Banking. All rights reserved. </td> </tr> </table> </body> </html>`});
+
         // Redirect to sign-in page after successful sign-up
         router.push('/sign-in');
       }

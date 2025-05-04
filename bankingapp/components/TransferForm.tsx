@@ -12,6 +12,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, CheckCircle } from 'lucide-react';
 import { getLoggedInUser } from "@/lib/actions/auth.actions";
 import { getCustomerAccounts, transFunds } from "@/lib/actions/user.banking";
+import { sendNotification } from "@/lib/actions/notifications.actions";
+
+
 
 interface Account {
   account_id: string;
@@ -33,7 +36,7 @@ interface TransferData {
   userId: string;
 }
 
-export default function TransferForm({ accounts, userId }: TransferFormProps) {
+export async function TransferForm({ accounts, userId }: TransferFormProps) {
   const [alert, setAlert] = useState<{
     type: 'success' | 'error';
     message: string;
@@ -44,6 +47,8 @@ export default function TransferForm({ accounts, userId }: TransferFormProps) {
     };
   } | null>(null);
   const router = useRouter();
+  const userInfo = await getLoggedInUser();
+  const userEmail = userInfo?.email;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     from_account_no: "",
@@ -185,6 +190,10 @@ export default function TransferForm({ accounts, userId }: TransferFormProps) {
         type: 'error',
         message: error instanceof Error ? error.message : 'Failed to process transfer',
       });
+      await sendNotification({email: userEmail , subject: `Transfer Failed`, content: `      <!DOCTYPE html> <html> <head> <meta charset="UTF-8"> <title>Transfer Failed - Basel Banking</title> </head> <body style="margin:0; padding:0; font-family:Arial, sans-serif; background-color:#f4f4f4;"> <table align="center" width="100%" style="max-width:600px; margin:auto; background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1);"> <tr> <td style="background-color:#990000; color:#ffffff; padding:20px 30px; text-align:center;"> <h1 style="margin:0; font-size:22px;">Transfer Failed</h1> </td> </tr> <tr> <td style="padding:30px;"> <p style="font-size:16px; color:#333333;">Dear Customer,</p> <p style="font-size:16px; color:#333333;"> Unfortunately, your recent transfer could not be processed. </p> <p style="font-size:16px; color:#333333;"> Please ensure your account has sufficient balance and try again. If the issue persists, contact our support team for assistance. </p> <div style="margin:30px 0; text-align:center;"> <a href="http://localhost:3000/" style="display:inline-block; padding:12px 24px; background-color:#990000; color:#ffffff; text-decoration:none; border-radius:4px;">Contact Support</a> </div> </td> </tr> <tr> <td style="background-color:#f0f0f0; text-align:center; padding:15px; font-size:12px; color:#999999;"> &copy; 2025 Basel Banking. All rights reserved. </td> </tr> </table> </body> </html>`});
+
+
+
     } finally {
       setIsSubmitting(false);
     }

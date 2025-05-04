@@ -426,3 +426,30 @@ interface AssetFormData {
   maturityDate?: string;
   interestRate?: number;
 }
+
+// types/notification.d.ts
+interface Notification {
+  notification_id: string;
+  email: string;
+  subject: string;
+  content: string;
+  status: 'pending' | 'sent' | 'failed';
+  attempts: number;
+  last_attempt: string | null;
+  error_message: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface CreateNotificationDto {
+  email: string;
+  subject: string;
+  content: string;
+}
+
+interface NotificationFilter {
+  status?: 'pending' | 'sent' | 'failed';
+  email?: string;
+  page?: number;
+  limit?: number;
+}

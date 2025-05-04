@@ -3,6 +3,8 @@ import Link from "next/link";
 import React from "react";
 import BankCard from "./BankCard";
 import AddBankModal from "./AddBankModal";
+import DepositModal from "./DepositModal";
+
 
 interface RightSidebarProps {
   user: {
@@ -50,7 +52,8 @@ const RightSidebar = ({ user, accountsData }: RightSidebarProps) => {
       <section className="banks">
         <div className="flex w-full justify-between items-center">
           <h2 className="header-2">My Banks</h2>
-          <AddBankModal/>
+          <AddBankModal userId={user?.email}/>
+          <DepositModal accounts={accountsData.accounts}/>
         </div>
 
         {accountsData.accounts.length > 0 ? (

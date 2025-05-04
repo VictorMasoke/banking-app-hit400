@@ -1,5 +1,5 @@
 import HeaderBox from '@/components/HeaderBox'
-import TransferForm from '@/components/TransferForm'
+import {TransferForm} from '@/components/TransferForm'
 import {getLoggedInUser} from "@/lib/actions/auth.actions";
 import React from 'react'
 import { getCustomerAccounts } from '@/lib/actions/user.banking';
@@ -18,7 +18,7 @@ const Transfer = async () => {
       />
       <section className="size-full pt-5">
         <TransferForm
-            accounts={accountsData.accounts}
+            accounts={accountsData.data.accounts}
             userId={loggedIn.user_id}
           />
       </section>
