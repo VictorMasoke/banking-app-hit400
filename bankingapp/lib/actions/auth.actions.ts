@@ -43,19 +43,19 @@ export const signUp = async (userData: any) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        first_name: userData.firstName,
-        last_name: userData.lastName,
+        first_name: userData.first_name,
+        last_name: userData.last_name,
         email: userData.email,
         phone: userData.phone || "",
         password: userData.password,
-        date_of_birth: userData.dateOfBirth,
-        address: userData.address1,
+        date_of_birth: userData.date_of_birth,
+        address: userData.address,
         city: userData.city,
         state: userData.state,
-        zip_code: userData.postalCode,
-        country: "US", // Default or from form
-        security_question: "What city were you born in?", // Default or from form
-        security_answer: userData.city // Using city as security answer for example
+        zip_code: userData.zip_code,
+        country: userData.country, // Default or from form
+        security_question: userData.security_question, // Default or from form
+        security_answer: userData.security_answer // Using city as security answer for example
       }),
     });
 
