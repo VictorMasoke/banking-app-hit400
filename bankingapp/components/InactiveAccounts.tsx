@@ -77,15 +77,16 @@ export default function InactiveAccounts() {
         freeze: actionType === 'freeze'
       });
 
+      // Handle both success and error cases
       if ('error' in result) {
         setAlert({
           type: "error",
-          message: result.error || "Something went wrong",
+          message: result.error,
         });
       } else {
         setAlert({
           type: "success",
-          message: result.message || `Account ${actionType}d successfully`,
+          message: result.message,
         });
         fetchInactiveAccounts();
       }

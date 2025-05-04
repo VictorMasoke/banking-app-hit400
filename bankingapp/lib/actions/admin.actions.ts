@@ -4,7 +4,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { jwtVerify } from "jose";
 
-const API_BASE_URL = process.env.BASE_URL_API || "https://banking-api-b4x1.onrender.com";
+const API_BASE_URL =
+  process.env.BASE_URL_API || "https://banking-api-b4x1.onrender.com";
 const JWT_SECRET = "your_very_secure_jwt_secret";
 
 export const getAllTransactions = async () => {
@@ -106,16 +107,16 @@ export const accountFreezeUnfreeze = async (accountData: {
       }),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorData = await response.json();
       return {
-        error: errorData.message || "Failed to update account status",
+        error: data.message || "Failed to update account status",
         status: response.status,
       };
     }
 
-    const data = await response.json();
-    return data.message;
+    return { message: data.message };
   } catch (error) {
     console.error("Account status update error:", error);
     return {
@@ -150,21 +151,21 @@ interface BaselMetrics {
 export async function getBaselMetrics(): Promise<BaselMetrics> {
   try {
     const response = await fetch(`${API_BASE_URL}/basel/metrics`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      cache: 'no-store',
+      cache: "no-store",
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch Basel metrics');
+      throw new Error("Failed to fetch Basel metrics");
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching Basel metrics:', error);
+    console.error("Error fetching Basel metrics:", error);
     throw error;
   }
 }
