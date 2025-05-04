@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
+import { sendNotification } from "./notifications.actions";
 
 const API_BASE_URL = process.env.BASE_URL_API || "https://banking-api-b4x1.onrender.com";
 const JWT_SECRET = "your_very_secure_jwt_secret";
@@ -144,6 +145,18 @@ export const transFunds = async (transferData: {
     return { error: "Authentication required", status: 401 };
   }
 
+  const { payload } = await jwtVerify(
+    token,
+    new TextEncoder().encode(
+      process.env.JWT_SECRET || "your_very_secure_jwt_secret"
+    )
+  );
+
+  const emailUser = payload.email;
+  if (!emailUser) throw new Error("Token doesn't contain email");
+
+
+
   try {
     const { from_account_no, to_account_no, amount, description } =
       transferData;
@@ -151,6 +164,7 @@ export const transFunds = async (transferData: {
     // Validate input
     if (!from_account_no || !to_account_no || !amount) {
       return { error: "Missing required fields", status: 400 };
+
     }
 
     const response = await fetch(`${API_BASE_URL}/transactions/transfer`, {
@@ -169,6 +183,11 @@ export const transFunds = async (transferData: {
 
     const data = await response.json();
 
+    if (!response.ok) {
+      await sendNotification({email: `${emailUser}`, subject: 'Transfer Completed', content: `<p>Dear ${emailUser}, your transfer of ${amount} has been completed successfully.</p>`});
+    }
+
+    await sendNotification({email: `${emailUser}`, subject: 'Transfer Completed', content: `<p>Dear ${emailUser}, your transfer of ${amount} has been completed successfully.</p>`});
     // Return a plain object with status and data
     return data;
   } catch (error) {

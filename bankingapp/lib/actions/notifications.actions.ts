@@ -62,17 +62,6 @@ interface SendNotificationParams {
         throw new Error("Authentication required");
       }
 
-      // Verify token
-      const { payload } = await jwtVerify(
-        token,
-        new TextEncoder().encode(JWT_SECRET)
-      );
-
-      // Check if user has permission to send notifications
-      if (payload.role !== 'admin') {
-        throw new Error("Admin privileges required");
-      }
-
       const response = await fetch(`${API_BASE_URL}/notifications`, {
         method: 'POST',
         headers: {
