@@ -12,7 +12,7 @@ interface Asset {
   created_at: string;
 }
 
-const API_BASE_URL = process.env.BASE_URL_API || 'http://localhost:5600';
+const API_BASE_URL = process.env.BASE_URL_API || 'https://banking-api-b4x1.onrender.com';
 
 export async function getAllAssets(): Promise<Asset[]> {
   try {

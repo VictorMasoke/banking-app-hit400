@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 
-const API_BASE_URL = process.env.BASE_URL_API || "http://localhost:5600";
+const API_BASE_URL = process.env.BASE_URL_API || "https://banking-api-b4x1.onrender.com";
 const JWT_SECRET = "your_very_secure_jwt_secret";
 
 export const getCustomerAccounts = async () => {
